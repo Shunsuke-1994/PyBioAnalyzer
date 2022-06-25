@@ -7,7 +7,10 @@ Checked compatible with python3.7.
 - scipy 1.2.1
 - pandas
 
+# Usage
+```
+python PyBioAnalyzer.py --in_dir example/ --assay_type HS_DNA --min_lim 30 --max_lim 2000
+```
+
 # Authors
-- Georg Urtel
-- Shunsuke Sumi
-- Evgeniia Edeleva
+- Georg Urtel, Shunsuke Sumi, Evgeniia Edeleva
