@@ -9,7 +9,7 @@ Checked compatible with python3.7.
 
 # Usage
 ```
-python PyBioAnalyzer.py --in_dir example/ --assay_type HS_DNA --min_lim 30 --max_lim 2000
+python pybioanalyzer.py --in_dir example/ --assay_type HS_DNA --min_lim 30 --max_lim 2000
 ```
 
 # Authors
