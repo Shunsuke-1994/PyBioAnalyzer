@@ -16,6 +16,11 @@ from scipy import interpolate
 
 class PyBioAnalyzer():
     def __init__(self, folder_name, assay_type):
+        """
+        folder_name: folder name containing bioanalyzer data(csv)
+        assay_type: ['HS_DNA', 'pico_RNA', 'small_RNA']
+        """
+
         self.folder_name = folder_name
         self.assay_type = assay_type
         if self.assay_type == 'HS_DNA':
@@ -132,13 +137,21 @@ class PyBioAnalyzer():
         plt.grid()
         return 
     
-    def plot_samples(self, samples, plotrange, *labels, ladder = True):
-        if type(samples) != list:
-            samples = [samples]
-        if labels == ():
-            labels = samples
-        elif labels != ():
-            labels = labels[0]
+    def plot_samples(self, samples = "all", plotrange = [0, 1000], ladder = False):
+        """
+        sample: "all" (default) or list of int(eg. [1,2])
+        plotrange: [min, max]
+        ladder: show the ladder band
+        """
+
+        # if type(samples) != list:
+        #     samples = [samples]
+        if samples == "all":
+            samples = range(1, len(self.BAfiles)-1)
+        # if labels == ():
+        #     labels = samples
+        # elif labels != ():
+        #     labels = labels[0]
         BATable = self._load_all_bioanalyzer()
         # print(BATable)
         plt.figure(figsize = (8,6))
@@ -150,9 +163,9 @@ class PyBioAnalyzer():
         plt.legend()
         plt.xlabel(f"Size[{self.unit}]", fontsize = 16)
         plt.ylabel("Intensity", fontsize = 16)
-        plt.xlim(plotrange)
+        plt.xlim(*plotrange)
         plt.grid(alpha = 0.3)
-        return plt 
+        return  
         
 if __name__ == '__main__':
     import os
