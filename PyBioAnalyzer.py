@@ -1,54 +1,38 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Nov 20 20:20:00 2019
 
 Originally from Dr.Georg Urtel's and Shunsuke Sumi's code.
 Modified by Evgeniia Edeleva.
 """
-import pandas as pd
 import os
+import pandas as pd
 import matplotlib.pyplot as plt
+from glob import glob
 from scipy import interpolate
 #scipy 1.2.1
 #python 3.7
 
 
-class PyBioAnalyzer():
+class PyBioAnalyzer:
     def __init__(self, folder_name, assay_type):
         """
-        folder_name: folder name containing bioanalyzer data(csv)
-        assay_type: ['HS_DNA', 'pico_RNA', 'small_RNA']
+        folder_name: folder containing output csv files.
+        assay_type : ['HS_DNA', 'pico_RNA', 'small_RNA']
         """
-
         self.folder_name = folder_name
         self.assay_type = assay_type
         if self.assay_type == 'HS_DNA':
             self.a = 2139
-        if self.assay_type == 'pico_RNA':
+        elif self.assay_type == 'pico_RNA':
             self.a = 1438
-        if self.assay_type == 'small_RNA':
+        elif self.assay_type == 'small_RNA':
             self.a = 1218
         assert assay_type in ['HS_DNA', 'pico_RNA', 'small_RNA'], "Assay type is not supported. Choose 'HS_DNA', 'pico_RNA', or 'small_RNA'."
-        
-    def search_BAfiles(self, *data_dir):
-        """
-        data_dir is a parent directory of the data folder.
-        if you dont specify data_dir, data_dir = current dir. 
-        outputs: list of .csv files output from BioAnalyzer
-        """
-        BA_results = []
-        if data_dir == ():
-            data_dir = os.getcwd()
-        else:
-            data_dir = data_dir[0]
-        for curDir, dirs, files in os.walk(data_dir):
-            if self.folder_name in curDir:
-                BA_results = [os.path.join(curDir, file) for file in files if (".csv" in file)] 
+
+        BA_results = glob("*/*.csv")         
         assert BA_results != [], "Could'nt find the data folder! Check the folder location."
         self.BAfiles = BA_results
-        return BA_results
-
+        
     def _load_bioanalyzer(self, bioanalyzer_file):
         """
         load [time, intensity value] from csv file
@@ -137,60 +121,45 @@ class PyBioAnalyzer():
         plt.grid()
         return 
     
-    def plot_samples(self, samples = "all", plotrange = [0, 1000], ladder = False):
-        """
-        sample: "all" (default) or list of int(eg. [1,2])
-        plotrange: [min, max]
-        ladder: show the ladder band
-        """
-
-        # if type(samples) != list:
-        #     samples = [samples]
-        if samples == "all":
-            samples = range(1, len(self.BAfiles)-1)
-        # if labels == ():
-        #     labels = samples
-        # elif labels != ():
-        #     labels = labels[0]
+    def plot_samples(self, samples, plotrange, *labels, ladder = True):
+        if type(samples) != list:
+            samples = [samples]
+        if labels == ():
+            labels = samples
+        elif labels != ():
+            labels = labels[0]
         BATable = self._load_all_bioanalyzer()
-        # print(BATable)
-        plt.figure(figsize = (8,6))
+        # print(BATable.head())
+        # print(BATable.columns)
+        plt.figure(figsize = (12,6))
         if ladder:
             plt.plot(BATable[f"Size[{self.unit}]"], BATable["Ladder"], color = "crimson", label = "Ladder")
         for f in samples:
             if (not "Ladder" in f) and (not "Results" in f):
                 plt.plot(BATable[f"Size[{self.unit}]"], BATable[f], label = os.path.basename(f))
         plt.legend()
+        plt.title(f"{self.folder_name}, {self.assay_type} kit", fontsize = 20)
         plt.xlabel(f"Size[{self.unit}]", fontsize = 16)
         plt.ylabel("Intensity", fontsize = 16)
-        plt.xlim(*plotrange)
+        plt.xlim(plotrange)
         plt.grid(alpha = 0.3)
-        return  
+        return
         
 if __name__ == '__main__':
-    import os
-    import matplotlib.pyplot as plt 
     import argparse
+    import matplotlib.pyplot as plt 
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--in_dir", required = True)
     parser.add_argument("--assay_type", required = True, choices=['HS_DNA', 'pico_RNA', 'small_RNA'])
-    parser.add_argument("--min_lim", required = True, type = int)
-    parser.add_argument("--max_lim", required = True, type = int)
+    parser.add_argument("--min_lim", default = 100, type = int)
+    parser.add_argument("--max_lim", default = 500, type = int)
+    parser.add_argument("--disable_ladder", action="store_false")
     args = parser.parse_args()
 
     pba = PyBioAnalyzer(args.in_dir, args.assay_type)
-    pba.search_BAfiles(args.in_dir)
     print("Loaded following sample files:")
     for f in pba.BAfiles:
-        print(f"\t-{f}")
-    pba.plot_samples(pba.BAfiles, [args.min_lim, args.max_lim])
+        print(f"\t{f}")
+    pba.plot_samples(pba.BAfiles, [args.min_lim, args.max_lim], ladder = args.disable_ladder)
     plt.show()
-    # print(f"==========Searching {args.in_dir} folder...==========")
-
-    # print("==========Test==========")
-    # print(f"==========Searching 20191010_bionanalyzer folder...==========")
-    # ba = BioAnalyzer("20191010_bionanalyzer")
-    # print("==========These are the data files found...==========")
-    # print(ba.search_BAfiles("/users/sumi/desktop"))
-    # ba.plot_samples([1,2,3,4], [150,300])
