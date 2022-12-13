@@ -29,7 +29,7 @@ class PyBioAnalyzer:
             self.a = 1218
         assert assay_type in ['HS_DNA', 'pico_RNA', 'small_RNA'], "Assay type is not supported. Choose 'HS_DNA', 'pico_RNA', or 'small_RNA'."
 
-        BA_results = glob("*/*.csv")         
+        BA_results = glob(os.path.join(f"{self.folder_name}", "*.csv"))
         assert BA_results != [], "Could'nt find the data folder! Check the folder location."
         self.BAfiles = BA_results
         
@@ -150,14 +150,14 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt 
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--in_dir", required = True)
+    parser.add_argument("--folder_name", required = True)
     parser.add_argument("--assay_type", required = True, choices=['HS_DNA', 'pico_RNA', 'small_RNA'])
     parser.add_argument("--min_lim", default = 100, type = int)
     parser.add_argument("--max_lim", default = 500, type = int)
     parser.add_argument("--disable_ladder", action="store_false")
     args = parser.parse_args()
 
-    pba = PyBioAnalyzer(args.in_dir, args.assay_type)
+    pba = PyBioAnalyzer(args.folder_name, args.assay_type)
     print("Loaded following sample files:")
     for f in pba.BAfiles:
         print(f"\t{f}")
