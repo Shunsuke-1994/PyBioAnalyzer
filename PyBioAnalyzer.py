@@ -32,6 +32,7 @@ class PyBioAnalyzer:
         BA_results = glob(os.path.join(f"{self.folder_name}", "*.csv"))
         assert BA_results != [], "Could'nt find the data folder! Check the folder location."
         self.BAfiles = BA_results
+        self.summary = self._load_all_bioanalyzer()
         
     def _load_bioanalyzer(self, bioanalyzer_file):
         """
@@ -109,8 +110,8 @@ class PyBioAnalyzer:
         f = self._time2nucleotide()
         Size = [f(time) for time in bioanalyzer.Time_stamp]
         Size = pd.DataFrame(Size, columns = [f"Size[{self.unit}]"])
-        bioanalyzer = pd.concat([bioanalyzer, Size], axis = 1)
-        return bioanalyzer
+        summary = pd.concat([bioanalyzer, Size], axis = 1)
+        return summary
 
     def linearity_check(self):
         ladder = self._load_ladder_info()
@@ -121,24 +122,20 @@ class PyBioAnalyzer:
         plt.grid()
         return 
     
-    def plot_samples(self, samples, plotrange, *labels, ladder = True):
+    def plot_samples(self, samples, plotrange, ladder = True):
         if type(samples) != list:
             samples = [samples]
-        if labels == ():
-            labels = samples
-        elif labels != ():
-            labels = labels[0]
-        BATable = self._load_all_bioanalyzer()
-        # print(BATable.head())
-        # print(BATable.columns)
+
+        BATable = self.summary
+
         plt.figure(figsize = (12,6))
         if ladder:
             plt.plot(BATable[f"Size[{self.unit}]"], BATable["Ladder"], color = "crimson", label = "Ladder")
         for f in samples:
             if (not "Ladder" in f) and (not "Results" in f):
                 plt.plot(BATable[f"Size[{self.unit}]"], BATable[f], label = os.path.basename(f))
-        plt.legend()
-        plt.title(f"{self.folder_name}, {self.assay_type} kit", fontsize = 20)
+        plt.legend(fontsize = 8)
+        plt.title(f"Assay name: {self.folder_name}, {self.assay_type} kit", fontsize = 20)
         plt.xlabel(f"Size[{self.unit}]", fontsize = 16)
         plt.ylabel("Intensity", fontsize = 16)
         plt.xlim(plotrange)
@@ -162,4 +159,5 @@ if __name__ == '__main__':
     for f in pba.BAfiles:
         print(f"\t{f}")
     pba.plot_samples(pba.BAfiles, [args.min_lim, args.max_lim], ladder = args.disable_ladder)
+    plt.tight_layout()
     plt.show()
