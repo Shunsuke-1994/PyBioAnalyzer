@@ -9,7 +9,7 @@ Checked compatible with python3.7. Probably works in python >3.7.
 
 # Usage
 ```
-python PyBioAnalyzer.py --folder example/ --assay_type HS_DNA --min_lim 30 --max_lim 500 --disable_ladder
+pybioanalyzer --folder_name example/ --assay_type HS_DNA --min_lim 30 --max_lim 500 --disable_ladder
 ```
 - result files must be export as csv format.
 - Results.csv has to contain ladder information.
