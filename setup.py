@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="pybioanalyzer",
-    version="0.1",
+    version="0.2",
     description="A Python parser for Bioanalyzer files",
     author="Shunsuke Sumi, Evgeniia Edeleva, Georg Urtel",
     author_email="shunsuke.sumi@cira.kyoto-u.ac.jp",
