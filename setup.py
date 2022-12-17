@@ -20,4 +20,9 @@ setup(
     ],  # external packages as dependencies
     long_description=long_description,
     long_description_content_type="text/markdown",
-)
+    entry_points={
+                'console_scripts':[
+                    'pybioanalyzer = pybioanalyzer.main:plot_bioanalyzer',
+                ],
+            }
+    )

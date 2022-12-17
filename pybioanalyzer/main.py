@@ -142,10 +142,10 @@ class PyBioAnalyzer:
         plt.grid(alpha = 0.3)
         return
         
-if __name__ == '__main__':
-    import argparse
-    import matplotlib.pyplot as plt 
 
+import argparse
+
+def plot_bioanalyzer():
     parser = argparse.ArgumentParser()
     parser.add_argument("--folder_name", required = True)
     parser.add_argument("--assay_type", required = True, choices=['HS_DNA', 'pico_RNA', 'small_RNA'])
@@ -161,3 +161,6 @@ if __name__ == '__main__':
     pba.plot_samples(pba.BAfiles, [args.min_lim, args.max_lim], ladder = args.disable_ladder)
     plt.tight_layout()
     plt.show()
+
+if __name__ == '__main__':
+    plot_bioanalyzer()
