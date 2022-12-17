@@ -18,6 +18,6 @@ setup(
         "scipy>=1.2.1",
         "pandas"
     ],  # external packages as dependencies
-    long_description="README.md",
+    long_description=long_description,
     long_description_content_type="text/markdown",
 )
